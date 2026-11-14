@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<input id="txt" placeholder="Speak here">
+
+<button id="mic">Mic</button>
+
+<script>
+const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+if (!SpeechRecognition) {
+    alert("Speech Recognition not supported");
+}
+
+const recognition = new SpeechRecognition();
+
+recognition.lang = "en-IN";
+
+recognition.onresult = (e) => {
+    document.getElementById("txt").value =
+        e.results[0][0].transcript;
+};
+
+recognition.onerror = (e) => {
+    console.log("ERROR:", e.error);
+};
+
+document.getElementById("mic").onclick = () => {
+    recognition.start();
+};
+</script>
+
+</body>
+</html>

@@ -1,0 +1,615 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <meta charset="UTF-8" />
+    <title>{% block title %}User App{% endblock %}</title>
+    <script
+      type="module"
+      src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
+    ></script>
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+      @keyframes floatBot {
+        0% {
+          transform: translateY(0px);
+        }
+
+        50% {
+          transform: translateY(-10px);
+        }
+
+        100% {
+          transform: translateY(0px);
+        }
+      }
+html,
+body{
+    width:100%;
+    overflow-x:hidden;
+}
+ #bg-video{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    z-index:-2;
+    pointer-events:none;
+    background:#0b1020;
+    transform:none !important;
+}
+body {
+    min-height: 100vh;
+    background:#0b1020;
+}
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.35);
+        z-index: -1;
+      }
+      .navbar {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(15px);
+        padding: 20px 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .navbar h1 {
+        color: white;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        margin-left: 15px;
+        padding: 10px 15px;
+        border-radius: 8px;
+        transition: 0.3s;
+      }
+
+      .nav-links a:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .page-wrapper {
+        padding: 40px 0;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+       
+      }
+
+      .page-title {
+        color: white;
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 32px;
+      }
+
+      .table-wrapper {
+        width:60%;
+        max-width: 1200px;
+        margin: 20px auto;
+        background: rgb(124, 155, 171);
+        padding:20px;
+        border-radius: 20px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+      }   
+      .card{
+      width: 60%;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 20px;
+      background: rgb(124, 155, 171);
+        }
+
+      label {
+        display: block;
+        margin-top: 15px;
+        margin-bottom: 8px;
+        font-weight: 600;
+      }
+
+      input {
+        width: 100%;
+        padding: 14px;
+        border: 2px solid #d9dce3;
+        border-radius: 10px;
+        font-size: 15px;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .form-actions {
+        margin-top: 25px;
+        display: flex;
+        gap: 12px;
+      }
+
+      button,
+      .btn {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      button {
+        background: #667eea;
+        color: #ffffff;
+      }
+
+      .btn-secondary {
+        background: #10b981;
+        color: white;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th {
+        background: #667eea;
+        color: white;
+        padding: 15px;
+      }
+
+      td {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+      }
+
+      tr:hover {
+        background: #f8fafc;
+      }
+
+      .edit {
+        background: #f59e0b;
+        color: white;
+        padding: 8px 9px;
+        border-radius: 50%;
+        text-decoration: none;
+        margin-right: 5px;
+      }
+
+      .delete {
+        background: #ff0000;
+        color: rgb(255, 255, 255);
+        padding: 8px 12px;
+        border-radius: 50%;
+        text-decoration: none;
+      }
+
+      .pagination {
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      .pagination a {
+        background: rgb(116, 140, 155);
+        padding: 10px 15px;
+        border-radius: 8px;
+        text-decoration: none;
+      }
+
+      /* Chatbot */
+      #chatbot-btn{
+    width:140px;
+    height:140px;
+    cursor:pointer;
+
+    position:absolute;
+    bottom:0;
+    right:0;
+
+    animation:floatBot 3s ease-in-out infinite;
+}
+      #robot-message{
+    position:absolute;
+    bottom:145px;
+    right:0;
+
+    padding:10px 15px;
+
+    background:#fff;
+    color:#000;
+
+    border-radius:15px;
+    white-space:nowrap;
+
+    box-shadow:0 5px 20px rgba(0,0,0,.25);
+}
+     #robot{
+    width:100%;
+    height:100%;
+}
+
+ #chatbot-container{
+    display:none;
+
+    position:absolute;
+    bottom:155px;
+    right:0;
+
+    width:360px;
+    height:500px;
+
+    background:rgb(152,182,218);
+
+    border-radius:18px;
+
+    box-shadow:0 15px 40px rgba(0,0,0,.3);
+}
+
+      #chatbot-header {
+        background: #667eea;
+        color: rgb(143, 162, 179);
+        padding: 15px;
+        border-radius: 15px 15px 0 0;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      #chatbot-messages {
+        height: 380px;
+        overflow-y: auto;
+        padding: 10px;
+      }
+
+      #chatbot-input {
+        display: flex;
+        gap: 5px;
+        padding: 10px;
+      }
+
+      #chatbot-input input {
+        flex: 1;
+      }
+      #mic-btn {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        font-size: 22px;
+        cursor: pointer;
+
+        border-radius: 50%;
+
+        transition: 0.3s;
+      }
+
+      #mic-btn.listening {
+        background: red;
+        color: white;
+
+        transform: scale(1.1);
+
+        box-shadow: 0 0 15px red;
+      }
+
+      .chart-container {
+        
+        display: flex;
+        align-items: flex-start;
+        gap: 20px;
+      }
+
+      .legend-left {
+        min-width: 180px;
+        background: rgba(143, 181, 202, 0.95);
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+      .chart-row{
+          display:flex;
+          align-items:flex-start;
+          gap:20px;
+          width:60%;
+          margin:20px auto;
+      }
+
+    .stats-box{
+    position:fixed;
+    bottom:20px;
+    left:10px;
+    width:220px;
+    min-width:220px;
+    background:rgba(146,175,186,.95);
+    padding:20px;
+    border-radius:15px;
+    font-size:18px;
+    font-weight:600;
+    box-shadow:0 5px 20px rgba(23, 14, 14, 0.25);
+      }
+
+      .chart-card{
+          flex:1;
+      }
+
+      #userChart {
+        width: 100%;
+        background: rgb(212, 212, 212);
+        border-radius: 15px;
+      }
+      .container-fluid {
+        padding-left: 0;
+        padding-right: 0;
+      }
+      #chatbot-wrapper{
+          position:fixed;
+          bottom:10px;      /* align with stats box */
+          right:60px;
+          width:140px;
+          height:140px;
+          z-index:99999;
+      }
+    </style>
+  </head>
+
+  <body class="{% block body_class %}{% endblock %}">
+    <video autoplay muted loop playsinline preload="auto" id="bg-video">
+      <source src="{% static 'video/bg.mp4' %}" type="video/mp4" />
+    </video>
+
+    <!-- importing the Rolie link for chtbot -->
+    <!-- Chatbot Wrapper -->
+<div id="chatbot-wrapper">
+
+    <!-- Greeting -->
+    <div id="robot-message">
+        👋 Hi, Ask Me Anything!
+    </div>
+
+    <!-- Robot -->
+    <div id="chatbot-btn">
+        <model-viewer
+            id="robot"
+            src="{% static 'models/Rolie the robot.glb' %}"
+            auto-rotate
+            camera-controls
+            disable-zoom>
+        </model-viewer>
+    </div>
+
+    <!-- Chat Window -->
+    <div id="chatbot-container">
+        <div id="chatbot-header">
+            AI Assistant
+            <span id="close-chat">✖</span>
+        </div>
+
+        <div id="chatbot-messages"></div>
+
+        <div id="chatbot-input">
+            <input type="text"
+                   id="chat-input"
+                   placeholder="Ask something...">
+
+            <button id="mic-btn" type="button">🎙️</button>
+
+            <button id="send-chat">Send</button>
+        </div>
+    </div>
+
+</div>
+    <div class="navbar">
+      <h1>🌟 User Management</h1>
+      <div class="nav-links">
+        <a href="{% url 'add_user' %}">➕ Add User</a>
+        <a href="{% url 'list_users' %}">📋 User List</a>
+      </div>
+    </div>
+
+    <div class="page-wrapper">
+      <div class="container-fluid">{% block content %}{% endblock %}</div>
+    </div>
+
+    <script>
+      //chatbot-buttton:----
+      const chatBtn = document.getElementById("chatbot-btn"); //getting html elements to store
+
+      //for closing the chat
+      const chatWindow = document.getElementById("chatbot-container");
+      const closeBtn = document.getElementById("close-chat");
+
+      //when click on robot it does something
+      closeBtn.onclick = () => {
+        chatWindow.style.display = "none";
+
+        document.getElementById("robot-message").style.display = "block";
+      };
+
+      //to assist with bubble
+      chatBtn.onclick = () => {
+        chatWindow.style.display = "block";
+
+        const bubble = document.getElementById("robot-message");
+
+        if (bubble) {
+          bubble.remove();
+        }
+      };
+
+      //for taking data from the user:----------
+      document.getElementById("send-chat").onclick = async () => {
+        let input = document.getElementById("chat-input");
+
+        let message = input.value.trim();
+
+        if (!message) return;
+
+        let messages = document.getElementById("chatbot-messages");
+
+        messages.innerHTML += `
+        <p><b>You:</b> ${message}</p>
+    `;
+
+        input.value = "";
+
+        const response = await fetch("/myapp/chatbot/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}",
+          },
+          body: JSON.stringify({
+            message: message,
+          }),
+        });
+        //giving response back:-----
+        const data = await response.json();
+
+        messages.innerHTML += `
+        <p><b>AI Assistant:</b> ${data.reply}</p>
+    `;
+
+        messages.scrollTop = messages.scrollHeight;
+      };
+
+      //enter button
+      document
+        .getElementById("chat-input")
+        .addEventListener("keydown", function (event) {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            document.getElementById("send-chat").click();
+          }
+        });
+
+      //adding speech recognition code:----
+      //speech to text:------
+      const micBtn = document.getElementById("mic-btn");
+
+      const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
+
+      if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+
+        //detection logs:----
+        recognition.onaudiostart = () => {
+          console.log("Audio detected");
+        };
+
+        recognition.onaudioend = () => {
+          console.log("Audio ended");
+        };
+        recognition.onstart = () => {
+          console.log("Listening...");
+        };
+
+        recognition.onspeechstart = () => {
+          console.log("Speech detected");
+        };
+
+        recognition.onspeechend = () => {
+          console.log("Speech ended");
+        };
+        recognition.onsoundstart = () => {
+          console.log("Sound detected");
+        };
+
+        recognition.onsoundend = () => {
+          console.log("Sound ended");
+        };
+
+        recognition.onnomatch = () => {
+          console.log("No match");
+        };
+        recognition.lang = "en-IN";
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
+        let isListening = false;
+
+        micBtn.addEventListener("click", () => {
+          if (isListening) return;
+
+          isListening = true;
+
+          console.log("Mic clicked");
+
+          recognition.start();
+        });
+
+        recognition.onresult = (event) => {
+          const text = event.results[event.resultIndex][0].transcript;
+
+          console.log("TEXT:", text); //transcription prints when speaks
+
+          document.getElementById("chat-input").value = text;
+        };
+        recognition.onerror = (event) => {
+          console.log("ERROR:", event.error);
+        };
+
+        recognition.onnomatch = () => {
+          console.log("NO MATCH");
+        };
+        recognition.onend = () => {
+          isListening = false;
+          micBtn.classList.remove("listening");
+          micBtn.innerHTML = "🎙️";
+        };
+
+        recognition.onerror = (event) => {
+          console.log(event.error);
+
+          isListening = false;
+
+          micBtn.classList.remove("listening");
+
+          micBtn.innerHTML = "🎙️";
+        };
+      } else {
+        console.log("Speech Recognition not supported");
+      }
+    </script>
+
+    <!-- 3-D Background:--------
+    <script>
+      document.addEventListener("mousemove",(e)=>{
+
+    const x=(window.innerWidth/2-e.clientX)/80;
+    const y=(window.innerHeight/2-e.clientY)/80;
+
+    document.querySelector(".navbar").style.transform=
+        `rotateY(${-x/5}deg) rotateX(${y/5}deg)`;
+
+});  -->
+    <!-- </script> -->
+  </body>
+</html>

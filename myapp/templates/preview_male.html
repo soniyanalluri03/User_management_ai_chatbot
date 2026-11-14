@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Male Users Preview</title>
+
+    <style>
+        body{
+            font-family:Arial,sans-serif;
+            background:#f5f5f5;
+            padding:30px;
+        }
+
+        h2{
+            text-align:center;
+            color:#333;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            background:white;
+            margin-top:20px;
+        }
+
+        th{
+            background:#667eea;
+            color:white;
+            padding:12px;
+        }
+
+        td{
+            padding:12px;
+            text-align:center;
+            border:1px solid #ddd;
+        }
+
+        tr:nth-child(even){
+            background:#f9f9f9;
+        }
+
+        .download-btn{
+            display:inline-block;
+            margin-top:20px;
+            padding:12px 20px;
+            background:#10b981;
+            color:white;
+            text-decoration:none;
+            border-radius:8px;
+        }
+
+        .btn-container{
+            text-align:center;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>👨 Male Users Preview</h2>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Gender</th>
+        <th>Age</th>
+        <th>Height</th>
+        <th>Weight</th>
+    </tr>
+
+    {% for user in users %}
+    <tr>
+        <td>{{ user.id }}</td>
+        <td>{{ user.gender }}</td>
+        <td>{{ user.age }}</td>
+        <td>{{ user.height }}</td>
+        <td>{{ user.weight }}</td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+<div class="btn-container">
+    <a href="/myapp/download-male-csv/" class="download-btn">
+        📥 Download Male CSV
+    </a>
+</div>
+
+</body>
+</html>

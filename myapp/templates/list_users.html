@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+<!-- <script src="https://code.highcharts.com/highcharts.js"></script> -->
+{% block title %}User List{% endblock %}
+{% block body_class %}list-page{% endblock %}
+
+{% block content %}
+<h2 class="page-title">📋 User Directory</h2>
+<!-- <div id="userChart" style="height:400px; margin-bottom:30px;"></div> -->
+
+ <!-- legends:--- -->
+<div class="chart-row">
+
+    <div class="stats-box">
+        <div>🔵 Male ={{ male_count }}</div>
+        <div>🟣 Female = {{ female_count }}</div>
+        <div>🟢 Age < 24 = {{ below_24 }}</div>
+        <div>🟠 Age ≥ 24 ={{ above_24 }}</div>
+    </div>
+
+    <div id="userChart" style="height: 500px;"></div>
+
+</div>
+
+
+<div class="table-wrapper">
+<table>
+    <tr>
+        <th>S.No</th>
+        <th>Gender</th>
+        <th>Age</th>
+        <th>Height</th>
+        <th>Weight</th>
+        <th>Actions</th>
+    </tr>
+
+    {% for user in page_obj %}
+    <tr>
+        <td>{{forloop.counter}}</td>
+        <td>{{ user.gender }}</td>
+        <td>{{ user.age }}</td>
+        <td>{{ user.height }}</td>
+        <td>{{ user.weight }}</td>
+        <td class="actions">
+            <a href="{% url 'edit_user' user.id %}" class="edit">
+                <i class="fa-regular fa-pen-to-square"></i>
+            </a>
+            <a href="{% url 'delete_user' user.id %}" class="delete">
+                <i class="fa-solid fa-trash"></i>
+            </a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="5" style="text-align:center;">No records found</td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+
+<div class="pagination">
+{% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}">⬅ Prev</a>
+{% endif %}
+
+<span style="color:white; font-weight:600;">
+    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+{% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}">Next ➡</a>
+{% endif %}
+</div>
+
+<!----Highcharts here-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.4.8/highcharts.min.js"></script>
+<script>
+console.log("Highcharts type =", typeof Highcharts);
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const categories = {{ categories|safe }};
+    const data = {{ data|safe }};
+
+    let currentType = 'column';
+
+let chart = Highcharts.chart('userChart', {
+
+    chart: {
+        type: currentType,
+        backgroundColor: '#718b9f',
+        events: {
+            click: function () {
+
+                currentType =
+                    currentType === 'column'
+                    ? 'line'
+                    : 'column';
+
+                chart.update({
+                    chart: {
+                        type: currentType
+                    }
+                });
+            }
+        }
+    },
+
+    title: {
+        text: 'User Age Analysis'
+    },
+
+    subtitle: {
+        text: '<b style="color:black;"> Click on chart to switch between Bar and Line</b>'
+        
+    },
+
+    xAxis: {
+        categories: categories
+    },
+
+    yAxis: {
+        title: {
+            text: '<b style="color:black;">No. of Users</b>'
+        }
+    },
+
+    // Bar color changes:---
+    plotOptions: {
+        column: {
+            colorByPoint: true
+        },
+        series: {
+            animation: true
+        }
+    },
+
+    series: [{
+        name: '<b style="color:black;">Users</b>',
+        data: [
+            { y: data[0], color: '#3b82f6' },
+            { y: data[1], color: '#10b981' },
+            { y: data[2], color: '#f59e0b' },
+            { y: data[3], color: '#ef4444' },
+            { y: data[4], color: '#8b5cf6' }
+        ]
+    }]
+});
+
+});
+
+</script>
+{% endblock %}

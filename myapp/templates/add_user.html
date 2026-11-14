@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Add User{% endblock %}
+{% block body_class %}add-page{% endblock %}
+
+{% block content %}
+<div class="container">
+<h2 class="page-title">✨ Add New User</h2>
+
+<div class="card">
+<form method="post" onsubmit="return validateForm()">
+    {% csrf_token %}
+
+    <label>Gender</label>
+    <input type="text" id="name" name="gender" placeholder="Enter your gender">
+
+    <label>Age</label>
+    <input type="text" id="email" name="age" placeholder="Enter age">
+
+    <label>Height</label>
+    <input type="text" id="age" name="height" placeholder="Enter height">
+
+    <label>Weight</label>
+    <input type="text" id="city" name="weight" placeholder="Enter weight">
+
+    <div class="form-actions">
+        <button type="submit">💾 Save</button>
+        <a href="{% url 'list_users' %}" class="btn btn-secondary">👀 View Users</a>
+    </div>
+</form>
+</div>
+</div>
+
+<script>
+function validateForm() {
+    let name = document.getElementById("Gender").value;
+    let email = document.getElementById("Age").value;
+    let age = document.getElementById("Height").value;
+    let city = document.getElementById("Weight").value;
+
+    if (!Gender || !Age || !Height || !Weight) {
+        alert("All fields are required");
+        return false;
+    }
+    return true;
+}   
+</script>
+{% endblock %}

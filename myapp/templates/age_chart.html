@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Age Distribution Chart</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.4.8/highcharts.min.js"></script>
+
+    <style>
+        body{
+            font-family:Arial, sans-serif;
+            background:#718b9f;
+            padding:20px;
+        }
+
+        #container{
+            width:100%;
+            height:500px;
+            margin-top:20px;
+        }
+
+        .btn{
+            background:#547181;
+            color:rgb(121, 146, 166);
+            border:none;
+            padding:10px 20px;
+            border-radius:8px;
+            cursor:pointer;
+            font-size:16px;
+        }
+
+        .btn:hover{
+            background:#1d4ed8;
+        }
+    
+    </style>
+</head>
+
+<body>
+
+<h2>📊 Age Distribution Analysis</h2>
+
+<button class="btn" onclick="toggleChart()">
+    Switch to Line Chart
+</button>
+
+<div id="container"></div>
+
+<script>
+const categories = JSON.parse('{{ categories|escapejs }}');
+const data = JSON.parse('{{ data|escapejs }}');
+
+let currentType = 'column';
+
+let chart = Highcharts.chart('container', {
+
+    chart: {
+        type: currentType,
+        events: {
+            click: function () {
+                currentType = currentType === 'column' ? 'line' : 'column';
+
+                chart.update({
+                    chart: {
+                        type: currentType
+                    }
+                });
+
+                updateButtonText();
+            }
+        }
+    },
+
+    title: {
+        text: 'Age Distribution'
+    },
+
+    subtitle: {
+        text: 'Click on chart or button to switch view'
+    },
+
+    xAxis: {
+        categories: categories
+    },
+
+    yAxis: {
+        title: {
+            text: 'Number of Users'
+        }
+    },
+
+    series: [{
+        name: 'Users',
+        colorByPoint: true,
+        data: [
+            { name: '0-18', y: data[0], color: '#3b82f6' },
+            { name: '19-25', y: data[1], color: '#10b981' },
+            { name: '26-35', y: data[2], color: '#f59e0b' },
+            { name: '36-45', y: data[3], color: '#ef4444' },
+            { name: '46+', y: data[4], color: '#8b5cf6' }
+        ]
+    }]
+});
+
+// Proper external function (outside chart object)
+function toggleChart() {
+    currentType = currentType === 'column' ? 'line' : 'column';
+
+    chart.update({
+        chart: {
+            type: currentType
+        }
+    });
+
+    updateButtonText();
+}
+
+function updateButtonText() {
+    document.querySelector('.btn').innerHTML =
+        currentType === 'column'
+        ? 'Switch to Line Chart'
+        : 'Switch to Bar Chart';
+}
+</script>
+</body>
+</html>
